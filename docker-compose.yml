@@ -1,0 +1,52 @@
+services:
+  warehouse-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: warehouse-rest-api
+    ports:
+      - "8081:8081"
+    environment:
+      # PostgreSQL Database
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_PORT}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_DATABASE=${PG_DATABASE}
+      
+      # AWS Configuration
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - AWS_REGION=${AWS_REGION}
+      
+      # Azure Configuration
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      - AZURE_STORAGE_ACCOUNT_NAME=${AZURE_STORAGE_ACCOUNT_NAME}
+      - AZURE_CONTAINER_NAME=${AZURE_CONTAINER_NAME}
+      
+      # Application Settings
+      - APP_TITLE=Warehouse API - RESTful
+      - APP_VERSION=1.0.0
+      - LOG_LEVEL=INFO
+    
+    volumes:
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8081/health').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    networks:
+      - warehouse-network
+
+networks:
+  warehouse-network:
+    driver: bridge
