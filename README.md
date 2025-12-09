@@ -1,6 +1,6 @@
 # Warehouse REST API
 
-**Author**: Tushar J
+**Author**: SABU
 
 A modular FastAPI-based warehouse management system with camera integration, AI-powered video analytics, and real-time monitoring capabilities.
 
